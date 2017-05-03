@@ -238,23 +238,16 @@ const recipientId = sessions[sessionId].fbid;
 
   getPrayerTimes({context, entities , sessionId}) {
 
-    var loc = firstEntityValue(entities, 'location');
+    var location = firstEntityValue(entities, 'location');
    
 
-    if (loc) {
-       //console.log(location);
+    if (location) {
+    	 //console.log(location);
 
 
+var request = require("request")
 
-
-const request = require('request');
-var urlencode = require('urlencode');
-
-
-
-var url = "http://www.transltr.org/api/translate?text="+urlencode(loc)+"&to=en&from=ar"
-
-
+var url = "http://muslimsalat.com/london/daily.json?key=16a741273a18579bdb7abdbae61b46d6&jsoncallback=?"
 
 request({
     url: url,
@@ -262,49 +255,29 @@ request({
 }, function (error, response, body) {
 
     if (!error && response.statusCode === 200) {
-
-   var loc = body['translationText'];
-   const request = require('request');
-
-
-var url = "http://muslimsalat.com/"+loc+"/daily.json?key=16a741273a18579bdb7abdbae61b46d6&jsoncallback"
-//console.log(url)
+     //  fs.writeFile('myjsonfile.json', body, 'utf8', callback);
+      //  console.log(body) // Print the json response
 
 
-request({
-    url: url,
-    json: true
-}, function (error, response, body) {
-
-    if (!error && response.statusCode === 200) {
-
-
+  const recipientId = sessions[sessionId].fbid;
+  if (recipientId) {
+      // Yay, we found our recipient!
+      // Let's forward our bot response to her.
+      // We return a promise to let our bot know when we're done sending
+     
       
-      var res = 'الفجر' + body['items'][0]['fajr'] +'\n' + 'الشروق' + body['items'][0]['shurooq'] +'\n' + 'الظهر' +  body['items'][0]['dhuhr'] +'\n' +'العصر' +   body['items'][0]['asr'] +'\n' + 'المغرب' +  body['items'][0]['maghrib'] +'\n' + 'العشاء' +  body['items'][0]['isha'] ;
 
 
-const recipientId = sessions[sessionId].fbid;
-  if (recipientId) { return fbMessage(recipientId, res); }
-
-  
+      return fbMessage(recipientId, "res");
+  }
     }
 })
+//   console.log(location);
 
+     // context.forecast = 'sunny in ' + location; // we should call a weather API here
 
-  
-    }
-})
-
-
-
-
-
-  
-    }
-
-
-
-    else {
+    //  delete context.missingLocation;
+    } else {
       context.missingLocation = true;
       delete context.forecast;
     }
